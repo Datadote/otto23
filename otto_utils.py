@@ -3,6 +3,7 @@ from multiprocessing import Pool
 import datetime
 import gc
 import itertools
+import time
 
 # import numpy as np
 import pandas as pd
@@ -199,6 +200,47 @@ def b2b_process(
     df['wgt'] = df.wgt.astype('float32')
     df = df[['aid_x','aid_y','wgt']]
     return df
+
+def preprocess_covisits(df, date):
+    print('*Start covisit preprocessing')
+    if not os.path.exists('covisit'): os.mkdir('covisit')
+
+    fn = f'covisit/{date}_top_20_clicks_data_datatest.pkl'
+    if not os.path.exists(fn):
+        print('Preprocess top_20_clicks')
+        t1 = time.perf_counter()
+        tmp = clicks_covisit(df, chunk_size=100_000)
+        tmp = tmp.groupby('aid_x').aid_y.apply(list).to_dict()
+        tdur = time.perf_counter()-t1
+        print(f'Process time: {tdur/60:0.2f} mins')
+        pd.to_pickle(tmp, fn, protocol=4)
+    else:
+        print('top_20_clicks already exists')
+
+    fn = f'covisit/{date}_top_20_buys_data_datatest.pkl'
+    if not os.path.exists(fn):
+        print('Preprocess top_20_buys')
+        t1 = time.perf_counter()
+        tmp = carts_covisit(df, chunk_size=100_000)
+        tmp = tmp.groupby('aid_x').aid_y.apply(list).to_dict()
+        tdur = time.perf_counter()-t1
+        print(f'Process time: {tdur/60:0.2f} mins')
+        pd.to_pickle(tmp, fn, protocol=4)
+    else:
+        print('top_20_buys already exists')
+
+    fn = f'covisit/{date}_top_20_buy2buy_data_datatest.pkl'
+    if not os.path.exists(fn):
+        print('Preprocess top_20_buy2buy')
+        t1 = time.perf_counter()
+        tmp = b2b_covisit(df)
+        tmp = tmp.groupby('aid_x').aid_y.apply(list).to_dict()
+        tdur = time.perf_counter()-t1
+        print(f'Process time: {tdur/60:0.2f} mins')
+        pd.to_pickle(tmp, fn, protocol=4)
+    else:
+        print('top_20_buy2buy already exists')
+    print('*Finished covisit preprocessing')
 
 ################## Suggest Functions ############
 def get_preds(t, func, chunk_size=64):
