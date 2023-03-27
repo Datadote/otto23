@@ -57,6 +57,7 @@ def get_recall(submission, DO_LOCAL_VALIDATION, DATE, VERBOSE=True):
         print(f'Overall Recall: {val_score:0.5f}')
         if VERBOSE:
             print('======================')
+        return recall_per_type['clicks'], recall_per_type['carts'], recall_per_type['orders'], val_score
     else:
         # For test submission
         sub = submission
