@@ -27,10 +27,45 @@ def create_config(d)->pd.DataFrame:
 def trange(df: pd.Series):
     start = pd.to_datetime(df.ts.min()*1e9)
     stop = pd.to_datetime(df.ts.max()*1e9)
-    
     print(start)
     print(stop)
     print(stop-start)
+    
+def get_recall(submission, DO_LOCAL_VALIDATION, DATE, VERBOSE=True):
+    if DO_LOCAL_VALIDATION:
+        VERBOSE=True
+        FN_GT = f'data/{DATE}_val_labels_gt.pkl'
+        ground_truth = pd.read_pickle(FN_GT)
+
+        # Revised recall calculation to use first 20 events after validation input timestamp
+        sub_with_gt = submission.merge(ground_truth[['session', 'type', 'labels']],
+                                       how='left',
+                                       on=['session', 'type'])
+        sub_with_gt = sub_with_gt[~sub_with_gt.labels_y.isna()]
+        sub_with_gt['hits'] = sub_with_gt.parallel_apply(
+            lambda row: len(set(row.labels_x).intersection(list(dict.fromkeys(row.labels_y))[:20])), axis=1)
+        sub_with_gt['gt_count'] = sub_with_gt.labels_y.apply(len).clip(0,20)
+
+        grp = sub_with_gt.groupby(['type'])
+        recall_per_type = grp['hits'].sum() / grp['gt_count'].sum()
+        val_score = (recall_per_type * pd.Series({'clicks': 0.10, 'carts': 0.30, 'orders': 0.60})).sum()
+        if VERBOSE:
+            print('======================')
+            for col in ['clicks', 'carts', 'orders']:
+                print(f'{col} Recall: {recall_per_type[col]:0.4f}')
+            print('======================')
+        print(f'Overall Recall: {val_score:0.5f}')
+        if VERBOSE:
+            print('======================')
+    else:
+        # For test submission
+        sub = submission
+        sub['session'] = sub['session'].astype(str)
+        sub['session_type'] = sub.session.str.cat(sub.type, sep='_')
+        sub = sub[['session_type', 'labels']]
+        sub.to_csv('submission.zip', index=False)
+        sub.head(3)
+               
     
 ################## Covisit Functions ############
 def clicks_covisit(
