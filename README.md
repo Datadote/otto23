@@ -4,6 +4,7 @@ Kaggle Tabular Competition - [OTTO – Multi-Objective Recommender System 2023](
 <br> - Uses cudf and polars to speed up processing
 
 # Leaderboard Scores
+Scores should be about the same as below. Slight variations are due to covisit creation
 | Architecture     | Private | Public  |
 | ---------------- |:-------:| :------:|
 | Covisit          | 0.57828 | 0.57807 |
