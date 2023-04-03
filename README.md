@@ -20,5 +20,10 @@ For covisit predictions only, run steps 1-5.
 5) Run NB 02_01 - Creates covisit matrices (function = preprocess_covisits), and saves them as pickle files. Set CV_NUM to val. data split as preferred. Set DO_LOCAL_VALIDATION (set False if you want to submit to Kaggle Otto). This notebook only submits predictions based on covisitation matrices
 6) RUN NB 03_01 - Extends off of NB 02_01. Get predictions with LGBMRanker. NB takes 50 covisitation candidates, and finds the top 20 for each aid type. Creates user and item features. Need to sweep each aid type for optimal HPs. Currently set only for 'carts' and 'orders'. Similar to NB 02_01, need to set CV_NUM and DO_LOCAL_VALIDATION. Final submissions use LGBMRanker predictions
 
+## Todos
+- Update NB 02_01 with code changes from NB 03_01. Should be minor code cleanup
+- Refactor suggest_carts function into otto_utils.py while maintaining same process speed. Starmap?
+- Add a blurb on how validation data is created
+
 ## Acknowledgements
 Thanks all
