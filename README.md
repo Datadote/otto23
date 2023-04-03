@@ -13,7 +13,7 @@ Scores should be about the same as below. Slight variations are due to covisit c
 ## Quick start
 For covisit predictions only, run steps 1-5.
 <br> For covisit + LGBMRanker predictions, run steps 1-6.
-1) Download data. Unzip in folder data: [Kaggle Otto data](https://www.kaggle.com/competitions/otto-recommender-system/data)
+1) Download [Kaggle Otto data](https://www.kaggle.com/competitions/otto-recommender-system/data). Unzip in folder data
 2) Run NB 01_01 - preprocess json data into parquets. Also saves aid type dictionaries as pickle files
 3) Run NB 01_02 - Creates local train and validation data files. For local val., we train on weeks 1-3, and validate on wk 4. Wk4 validation is created based on "Train/Test Split" on the [Otto Github repo](https://github.com/otto-de/recsys-dataset). Also, the final train set is created by using weeks 2-4 for train, and the original test set (week 5)
 4) Run NB 01_03 - Create smaller versions of validation data (5 / 10 / 25 / 50 / 100 %). This lets you iterate faster. Pick smallest val. data that meets your need. 5% is a good start point
