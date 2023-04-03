@@ -1,0 +1,9 @@
+cudf==22.8.0
+lightgbm==3.3.2.99
+matplotlib==3.6.1
+mlflow==1.30.0
+numpy==1.22.4
+pandarallel==1.6.3
+pandas==1.4.3
+polars==0.16.18
+scikit_learn==1.2.2
